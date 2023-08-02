@@ -2,9 +2,9 @@ package com.api.bulletinboard.post.controller;
 
 
 import com.api.bulletinboard.post.dto.Post;
+import com.api.bulletinboard.post.dto.Posts;
 import com.api.bulletinboard.post.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,17 +29,16 @@ public class PostController{
     }
 
     @GetMapping
-    public ResponseEntity<Page<Post>> getAllPosts(Pageable pageable) {
-        Page<Post> posts = postService.getAllPosts(pageable);
+    public ResponseEntity<Posts> getAllPosts(Pageable pageable) {
+        Posts posts = postService.getAllPosts(pageable);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<Post> savePost(
-            @RequestParam(value = "content", required = true) String content) {
-
-        postService.savePost(content);
+            @RequestBody Post post) {
+        postService.savePost(post);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PutMapping("/{postId}")

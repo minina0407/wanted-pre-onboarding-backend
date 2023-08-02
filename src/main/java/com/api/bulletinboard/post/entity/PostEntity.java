@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,25 +23,32 @@ public class PostEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
+    @Column(name = "title", nullable = false)
+    private String title;
 
     @Column(name = "content", nullable = false)
     private String content;
 
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
-    private Date createdAt;
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = true)
+    private LocalDateTime updatedAt;
 
 
     @Builder
-    public PostEntity(Long id, UserEntity user, String content, Date createdAt) {
+    public PostEntity(Long id, String title,UserEntity user,String content, LocalDateTime createdAt,LocalDateTime updatedAt) {
         this.id = id;
         this.user = user;
+        this.title = title;
         this.content = content;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
-    public void updateContent(String content) {
+    public void updateContent(String content,LocalDateTime updatedAt) {
         this.content = content;
+        this.updatedAt = updatedAt;
     }
    }

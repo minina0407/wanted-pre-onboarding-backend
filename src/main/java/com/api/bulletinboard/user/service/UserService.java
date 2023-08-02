@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +41,7 @@ public class UserService {
         UserEntity userEntity = UserEntity.builder()
                 .email(user.getEmail())
                 .password(passwordEncoder.encode(user.getPassword()))
+                .createdAt(LocalDateTime.now())
                 .role(AuthEnums.ROLE.ROLE_USER)
                 .build();
 

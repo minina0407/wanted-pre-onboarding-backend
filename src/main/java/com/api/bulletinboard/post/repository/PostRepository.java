@@ -1,4 +1,4 @@
-package com.api.bulletinboard.post;
+package com.api.bulletinboard.post.repository;
 
 
 import com.api.bulletinboard.post.entity.PostEntity;
