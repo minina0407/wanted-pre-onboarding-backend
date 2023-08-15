@@ -1,7 +1,38 @@
 # wanted-pre-onboarding-backend
 ## 성명: 민인아
+## 구현한 api 동작을 촬영한 데모 영상 링크
+https://drive.google.com/file/d/1HEYmOWab5NzJb1CrgW2WNeRTDMTViX9a/view?usp=sharing
 ## 데이터베이스 테이블 구조
 ![image](https://github.com/minina0407/wanted-pre-onboarding-backend/assets/83204216/7d2e3c5e-44fd-457f-9af5-9a9694cd32e4)
+ ```
+create table user
+(
+    id         bigint auto_increment
+        primary key,
+    email      varchar(255)                        not null,
+    password   varchar(255)                        not null,
+    role       varchar(255)                        not null,
+    created_at timestamp default CURRENT_TIMESTAMP null,
+    constraint UK_ob8kqyqqgmefl0aco34akdtpe
+        unique (email)
+)
+
+ ```
+
+ ```
+create table post
+(
+    id         bigint auto_increment
+        primary key,
+    content    varchar(255)                        not null,
+    created_at timestamp default CURRENT_TIMESTAMP not null,
+    user_id    bigint                              not null,
+    title      varchar(255)                        not null,
+    updated_at timestamp default CURRENT_TIMESTAMP null,
+    constraint FK72mt33dhhs48hf9gcqrq4fxte
+        foreign key (user_id) references user (id)
+)
+  ```
 ## 애플리케이션 실행방법
 1. Docker 설치되어있는지 확인 , 없다면 Docker 설치
 2. 터미널에서 다음 명령어 실행해서 프로젝트 클론
@@ -81,30 +112,30 @@ docker-compose down
 
 ## 구현 방법 및 이유에 대한 간략한 설명
 ###  회원가입 엔드포인트
-- 이메일 유효성 검사
+- 이메일 유효성 검사 : <br>
 @Email 어노테이션을 이용하여 이메일 형식을 체크합니다. 이는 사용자가 회원가입을 할 때 바르게 formatted된 이메일을 제공해야 함을 보장합니다.
-- 비밀번호 유효성 검사
+- 비밀번호 유효성 검사 : <br>
 @Size 어노테이션을 이용하여 비밀번호를 검증합니다. 이를 통해 비밀번호가 8글자 이상이 되도록 강제합니다.
-- 비밀번호 암호화
+- 비밀번호 암호화: <br>
 passwordEncoder를 이용하여 사용자의 비밀번호를 암호화하여 저장합니다.
 ###  로그인 엔드포인트
-- Spring Security를 활용하여 이메일, 비밀번호를 검증 
-- 사용자의 이메일과 비밀번호를 검증하고, 성공시 해당 사용자에게 권한을 부여합니다. 그리고 JWT(Jason Web Token)에 사용자 ID, 이메일, 권한을 포함시키고, 이 토큰을 리스폰 헤더에 넣어 전송합니다.(refresh Token, access Token) 
+- Spring Security를 활용하여 이메일, 비밀번호를 검증  <br>
+- refresh Token, access Token을 RETURN 
 ### 새로운 게시글 생성하는 엔드포인트
-게시글 작성시 content, title을 받아 컨트롤러에서 게시글을 만들어 DB에 저장
+게시글 작성시 content, title을 받아 컨트롤러에서 게시글을 만들어 DB에 저장<br>
 ROLE_USER,ROLE_ADMIN이 아닐 경우 작성하지 못하도록 예외 처리 
 ### 게시글 목록 조회하는 엔드포인트
-게시글 페이지네이션 처리
+게시글 페이지네이션 처리<br>
 로그인 하지않아도 조회 가능
 ### 특정 게시글 조회하는 엔드포인트
-PathVariable로 게시글 번호를 받아 게시글번호의 게시글을 리턴
+PathVariable로 게시글 번호를 받아 게시글번호의 게시글을 리턴<br>
 로그인 하지 않아도 조회 가능 
 ### 특정 게시글 수정하는 엔드포인트
-PathVariable로 게시글 번호, Body로 수정내용을 받아 게시글 수정처리
+PathVariable로 게시글 번호, Body로 수정내용을 받아 게시글 수정처리 <br>
 getMyUserWithAuthorities() 함수 이용해서 JWT 검증하여 작성자만 수정 가능
 작성자가 아닌 경우 예외 처리 
 ### 특정 게시글을 삭제하는 엔드포인트
-PathVariable로 게시글 번호를 받아 게시글을 삭제처리
+PathVariable로 게시글 번호를 받아 게시글을 삭제처리<br>
 getMyUserWithAuthorities() 함수 이용해서 JWT 검증하여 작성자만 수정 가능
 작성자가 아닌 경우 예외 처리 
 ### docker compose를 이용하여 애플리케이션 배포
@@ -204,8 +235,10 @@ json
     "refreshToken": "{JWT 리프래쉬 토큰}"
 }
 ```
+
 - 비밀번호 / 이메일이 틀린 경우
-  ```
+  
+```
 {
     "code": "502",
     "description": "Bad credentials"
@@ -380,12 +413,15 @@ json
 ```javascript
 HTTP 200 OK
 ```
-- 다른사람이 해당 게시글을 수정할려고 요청 경우 
+- 다른사람이 해당 게시글을 수정할려고 요청 경우
+  
 ```
 {
     "code": "502",
     "description": "Access is denied"
-}```
+}
+```
+
 ---
 
 ### 7. 특정 게시글 삭제
@@ -406,4 +442,5 @@ HTTP 200 OK
 {
     "code": "502",
     "description": "Access is denied"
-}```
+}
+```
